@@ -2,7 +2,7 @@
 
 import argparse, random, statistics
 
-runs = 1000
+runs = 10000
 
 parser = argparse.ArgumentParser()
 parser.add_argument("attack_troops", type=int)
@@ -45,10 +45,24 @@ def attack_territory(at, dt):
         dt -= r[1]
     return [at, dt]
 
+# Use only 2 to attack when only 1 defense
+def attack_territory_2v1(at, dt):
+    while dt > 1 and at > 1:
+        r = attack(min([3, at - 1]), min([2, dt]))
+        at -= r[0]
+        dt -= r[1]
+    while dt > 0 and at > 1:
+        r = attack(min([2, at - 1]), min([2, dt]))
+        at -= r[0]
+        dt -= r[1]
+    return [at, dt]
+    
+
 def run():    
     at = args.attack_troops
     for d in args.defense_troops:
         r = attack_territory(at, d)
+        #r = attack_territory_2v1(at, d)
         at = r[0]
         if r[1] == 0:  # Attacker won
             at -= 1  # leave one in won territory
